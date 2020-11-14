@@ -76,13 +76,13 @@ public class GameState {
 		child.setBoard(board);
 		child.setPlayer(3-player);
 		child.setMoveIn(move);
-		child.dropCoin(move);
+		child.dropCoin(move, player);
 		child.make4s();
 		return child;
 	}
 
-	void dropCoin(int move) {
-		board[getDepth(move)][move] = 3-player;
+	void dropCoin(int move, int coin) {
+		board[getDepth(move)][move] = coin;
 	}
 
 	int getDepth(int i) {
@@ -112,21 +112,22 @@ public class GameState {
 		return score;
 	}
 
-	public double checkWin() {
+	public double checkWin(int depth) {
+		double s = depth+100.0;
 		Integer[] win_1 = new Integer[]{1, 1, 1, 1};
 		Integer[] win_2 = new Integer[]{2, 2, 2, 2};
 		for (Integer[] i : horiz)
-			if (Arrays.equals(i, win_1)) return setScore(100.0);
-			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+			if (Arrays.equals(i, win_1)) return setScore(s);
+			else if (Arrays.equals(i, win_2)) return setScore(1.0/s);
 		for (Integer[] i : vert)
-			if (Arrays.equals(i, win_1)) return setScore(100.0);
-			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+			if (Arrays.equals(i, win_1)) return setScore(s);
+			else if (Arrays.equals(i, win_2)) return setScore(1.0/s);
 		for (Integer[] i : rise)
-			if (Arrays.equals(i, win_1)) return setScore(100.0);
-			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+			if (Arrays.equals(i, win_1)) return setScore(s);
+			else if (Arrays.equals(i, win_2)) return setScore(1.0/s);
 		for (Integer[] i : fall)
-			if (Arrays.equals(i, win_1)) return setScore(100.0);
-			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+			if (Arrays.equals(i, win_1)) return setScore(s);
+			else if (Arrays.equals(i, win_2)) return setScore(1.0/s);
 		return -1.0;
 	}
 

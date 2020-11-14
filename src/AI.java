@@ -1,5 +1,5 @@
 public class AI {
-	private final int MAX_DEPTH = 3;
+	private final int MAX_DEPTH = 5;
 
 	public AI() {}
 
@@ -9,11 +9,10 @@ public class AI {
 		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
 		System.out.printf("\nTime: %.3f s\n\n",
 				(System.currentTimeMillis()-startTime)/1000.0);
-		state.printTree(0);
 		for (int r = 0; r < 6; r++) {
 			for (int c = 0; c < 7; c++)
 				System.out.print(state.getBoard()[r][c] + " ");
-			System.out.println("");
+			System.out.println();
 		}
 		return bestChild(state);
 	}
@@ -21,7 +20,7 @@ public class AI {
 	private double prune(GameState state, int depth, double a, double b) {
 		if (depth == 0) return state.scoreBoard();
 
-		double win_score = state.checkWin();
+		double win_score = state.checkWin(depth);
 		if (win_score != -1.0) return win_score;
 
 		double value;
@@ -55,7 +54,7 @@ public class AI {
 				if (child.getScore() < value) best = child;
 			}
 			value = best.getScore();
-			System.out.printf("%s: %.3f\n",
+			System.out.printf("%s: %.5f\n",
 					child.getMoveIn(), child.getScore());
 		}
 		System.out.printf("\nBest: %s\n", best.getMoveIn());
