@@ -7,6 +7,7 @@ public class GameState {
 	private int player;
 	private int[][] board;
 	private int maxTurnTime;
+	private int moveIn;
 	private double score;
 	private ArrayList<GameState> children = new ArrayList<>();
 	private ArrayList<Integer[]> horiz, vert, rise, fall;
@@ -24,9 +25,9 @@ public class GameState {
 	}
 
 	public void setBoard(int[][] board) {
-		for (int r = 0; r < 7; r++)
-			for (int c = 0; c < 6; c++)
-				this.board[r][c] = board[r][c];
+		this.board = new int[6][7];
+		for (int r = 0; r < 6; r++)
+			System.arraycopy(board[r], 0, this.board[r], 0, 7);
 	}
 
 	public int getMaxTurnTime() {
@@ -35,6 +36,14 @@ public class GameState {
 
 	public void setMaxTurnTime(int maxTurnTime) {
 		this.maxTurnTime = maxTurnTime;
+	}
+
+	public int getMoveIn() {
+		return moveIn;
+	}
+
+	public void setMoveIn(int moveIn) {
+		this.moveIn = moveIn;
 	}
 
 	public double getScore() {
@@ -65,13 +74,15 @@ public class GameState {
 	GameState applyMove(int move) {
 		GameState child = new GameState();
 		child.setBoard(board);
+		child.setPlayer(3-player);
+		child.setMoveIn(move);
 		child.dropCoin(move);
 		child.make4s();
 		return child;
 	}
 
 	void dropCoin(int move) {
-		board[getDepth(move)][move] = player;
+		board[getDepth(move)][move] = 3-player;
 	}
 
 	int getDepth(int i) {
@@ -116,7 +127,7 @@ public class GameState {
 		for (Integer[] i : fall)
 			if (Arrays.equals(i, win_1)) return setScore(100.0);
 			else if (Arrays.equals(i, win_2)) return setScore(0.001);
-		return 0.0;
+		return -1.0;
 	}
 
 	public void make4s() {
@@ -140,5 +151,12 @@ public class GameState {
 			for (int c = 0; c < 4; c++)
 				fall.add(new Integer[]{board[r][c], board[r+1][c+1],
 						board[r+2][c+2], board[r+3][c+3]});
+	}
+
+	void printTree(int depth) {
+		if (score != 0)
+			System.out.printf("%s%s: %.3f %s\n", "  ".repeat(depth),
+					moveIn, score, player==1?"^":"v");
+		for (GameState child : children) child.printTree(depth+1);
 	}
 }
