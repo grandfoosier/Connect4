@@ -1,5 +1,5 @@
 public class AI {
-	private final int MAX_DEPTH = 5;
+	private final int MAX_DEPTH = 7;
 
 	public AI() {}
 
@@ -17,11 +17,11 @@ public class AI {
 		return bestChild(state);
 	}
 
-	private double prune(GameState state, int depth, double a, double b) {
-		if (depth == 0) return state.scoreBoard();
-
+	public static double prune(GameState state, int depth, double a, double b) {
 		double win_score = state.checkWin(depth);
 		if (win_score != -1.0) return win_score;
+
+		if (depth == 0) return state.scoreBoard();
 
 		double value;
 		state.findChildren();

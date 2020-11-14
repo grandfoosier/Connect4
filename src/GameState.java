@@ -156,7 +156,7 @@ public class GameState {
 
 	void printTree(int depth) {
 		if (score != 0)
-			System.out.printf("%s%s: %.3f %s\n", "  ".repeat(depth),
+			System.out.printf("%s%s: %.5f %s\n", "  ".repeat(depth),
 					moveIn, score, player==1?"^":"v");
 		for (GameState child : children) child.printTree(depth+1);
 	}
