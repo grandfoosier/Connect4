@@ -1,13 +1,15 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class GameState {
 
 	private int player;
 	private int[][] board;
 	private int maxTurnTime;
-
-	public GameState() {
-	}
+	private double score;
+	private ArrayList<GameState> children = new ArrayList<>();
+	private ArrayList<Integer[]> horiz, vert, rise, fall;
 
 	public int getPlayer() {
 		return player;
@@ -22,7 +24,9 @@ public class GameState {
 	}
 
 	public void setBoard(int[][] board) {
-		this.board = board;
+		for (int r = 0; r < 7; r++)
+			for (int c = 0; c < 6; c++)
+				this.board[r][c] = board[r][c];
 	}
 
 	public int getMaxTurnTime() {
@@ -31,6 +35,49 @@ public class GameState {
 
 	public void setMaxTurnTime(int maxTurnTime) {
 		this.maxTurnTime = maxTurnTime;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public double setScore(double score) {
+		this.score = score;
+		return score;
+	}
+
+	public ArrayList<GameState> getChildren() {
+		return children;
+	}
+
+	public void setChildren(ArrayList<GameState> children ) {
+		this.children = children;
+	}
+
+	public GameState() {
+	}
+
+	void findChildren() {
+		for (int i = 0; i < 7; i++)
+			if (board[0][i] == 0) children.add(applyMove(i));
+	}
+
+	GameState applyMove(int move) {
+		GameState child = new GameState();
+		child.setBoard(board);
+		child.dropCoin(move);
+		child.make4s();
+		return child;
+	}
+
+	void dropCoin(int move) {
+		board[getDepth(move)][move] = player;
+	}
+
+	int getDepth(int i) {
+		int j;
+		for (j = 0; j < 6; j++) if (board[j][i] != 0) break;
+		return j-1;
 	}
 
 	public String toString() {
@@ -49,4 +96,49 @@ public class GameState {
 		return builder.toString();
 	}
 
+	public double scoreBoard() {
+		if (score == 0) score = new Random().nextDouble()*9.999+0.001;
+		return score;
+	}
+
+	public double checkWin() {
+		Integer[] win_1 = new Integer[]{1, 1, 1, 1};
+		Integer[] win_2 = new Integer[]{2, 2, 2, 2};
+		for (Integer[] i : horiz)
+			if (Arrays.equals(i, win_1)) return setScore(100.0);
+			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+		for (Integer[] i : vert)
+			if (Arrays.equals(i, win_1)) return setScore(100.0);
+			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+		for (Integer[] i : rise)
+			if (Arrays.equals(i, win_1)) return setScore(100.0);
+			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+		for (Integer[] i : fall)
+			if (Arrays.equals(i, win_1)) return setScore(100.0);
+			else if (Arrays.equals(i, win_2)) return setScore(0.001);
+		return 0.0;
+	}
+
+	public void make4s() {
+		horiz = new ArrayList<>();
+		for (int r = 0; r < 6; r++)
+			for (int c = 0; c < 4; c++)
+				horiz.add(new Integer[]{board[r][c], board[r][c+1],
+						board[r][c+2], board[r][c+3]});
+		vert = new ArrayList<>();
+		for (int r = 0; r < 3; r++)
+			for (int c = 0; c < 7; c++)
+				vert.add(new Integer[]{board[r][c], board[r+1][c],
+						board[r+2][c], board[r+3][c]});
+		rise = new ArrayList<>();
+		for (int r = 3; r < 6; r++)
+			for (int c = 0; c < 4; c++)
+				rise.add(new Integer[]{board[r][c], board[r-1][c+1],
+						board[r-2][c+2], board[r-3][c+3]});
+		fall = new ArrayList<>();
+		for (int r = 0; r < 3; r++)
+			for (int c = 0; c < 4; c++)
+				fall.add(new Integer[]{board[r][c], board[r+1][c+1],
+						board[r+2][c+2], board[r+3][c+3]});
+	}
 }
