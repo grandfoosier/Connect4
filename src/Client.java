@@ -1,4 +1,3 @@
-package com.atomicobject.connectfour;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;

@@ -1,4 +1,3 @@
-package com.atomicobject.connectfour;
 import java.net.Socket;
 
 public class Main {

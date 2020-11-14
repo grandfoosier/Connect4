@@ -1,5 +1,3 @@
-package com.atomicobject.connectfour;
-
 public class AI {
 
 	public AI() {}

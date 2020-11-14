@@ -1,5 +1,3 @@
-package com.atomicobject.connectfour;
-
 import java.util.Arrays;
 
 public class GameState {
