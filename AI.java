@@ -60,9 +60,9 @@ public class AI {
 	public static int applyWeights(int pCount, int oppCount, int sum){
 		// apply the weights based on the previous connect 4 possibilities
 		if (pCount == 0){
-			//sum + value as per how "good" a player's move is
+			sum = sum - HOW_GOOD[opponentCount];
 		} else if (oppCount == 0) {
-			//sum - value as per how "good" an opponent's move is
+			sum = sum + HOW_GOOD[playerCount];
 		}
 
 		return sum;
@@ -140,5 +140,161 @@ public class AI {
 			checkColumn = checkColumn + 1;
 		}
 		return sum;
+	}
+
+
+
+
+	public static final int[] HOW_GOOD = {0, 2, 10^2, 10^3, 10^8}; // index is # of unblocked four-in-row potentials
+
+	// the closer a piece is to the center, the more 4-in-row permutations available.
+	// i.e.., generally center piece is most valuable
+	private static final int[] movesByCol = { 3, 4, 2, 5, 1, 6, 0 };
+
+
+	/**
+	 * Helper method that counts the moves made
+	 *
+	 * @param state the input state of the board
+	 * @return the number of moves already made
+	 */
+	private static int movesDone(GameState state){
+		// count the pieces
+
+		int counter = 0;
+		for (int row = 0; row < GameState.ROWS; row++){
+			for (int column = 0; column < GameState.COLS; column++){
+				if (state.getBoard()[row][column] != GameState.EMPTY)
+					counter++;
+			}
+		}
+
+		return counter;
+	}
+
+	/**
+	 * Evaluate position by finding unblocked 4 in a rows
+	 *
+	 * @param state the input state of the board
+	 * @return a total int evaluation of unblocked four-in-rows for opp and computer
+	 */
+	public static int evaluate(GameState state){
+		int player = state.getPlayer();
+
+		int[][] board = state.getBoard();
+
+		// value that evaluates the unblocked four-in-rows
+		int totalEvaluation = 0;
+
+		// Evaluate patterns for winning
+		//
+		//   . X X . .   => unblocked on both sides so we can connect 4
+		//  by placing another piece to become
+		//  . X X X .
+		for (int checkColumn = 0; checkColumn < 3; checkColumn ++){
+			// if 0 is empty, followed by 2 of my pieces and two more empty, this is a pattern
+			if (board[0][checkColumn] == Connect4State.EMPTY &&
+					board[0][checkColumn + 1] == player &&
+					board[0][checkColumn + 2] == player &&
+					board[0][checkColumn + 3] == GameState.EMPTY &&
+					board[0][checkColumn + 4] == GameState.EMPTY){
+				totalEvaluation += HOW_GOOD[3];
+			} else if (board[0][checkColumn] == GameState.EMPTY &&
+					board[0][checkColumn + 1] == GameState.EMPTY &&
+					board[0][checkColumn + 2] == player &&
+					board[0][checkColumn + 3] == player &&
+					board[0][checkColumn + 4] == GameState.EMPTY){
+				totalEvaluation += HOW_GOOD[3];
+			}
+		}
+
+
+		// Evaluate unblocked verticals
+		// all potential ver 4-in-row start from at most from row 2
+		for (int column = 0; column < 7; column++){
+			for (int row = 0; row < 3; row++){
+				int compCount = 0;
+				int oppCount = 0;
+
+				for (int checkRow = row; checkRow < row + 4; checkRow++){
+					if (board[checkRow][column] == player){
+						compCount++;
+					} else if (board[checkRow][column] == opponent){
+						oppCount++;
+					}
+				}
+
+				totalEvaluation = applyWeights(oppCount, compCount, totalEvaluation);
+			}
+		}
+
+		// Evaluate unblocked horizontals
+		// all potential hor 4-in-row start from at most from halfway col
+		for (int column = 0; column <= 3; column++){
+			for(int row = 0; row < GameState.ROWS; row++){
+				// counters for computer and opponent
+				int compCount = 0;
+				int oppCount = 0;
+
+				for (int checkColumn = column; checkColumn < column + 4; checkColumn++){
+					// check whose checker it is and increment their counter
+					if (board[row][checkColumn] == player){
+						compCount++;
+					} else if (board[row][checkColumn] == opponent){
+						oppCount++;
+					}
+				}
+
+				totalEvaluation = applyWeights(oppCount, compCount, totalEvaluation);
+			}
+		}
+
+		// Evaluate unblocked diagonals (up to right)
+		// up to right diagonal start at most from row 2, column 3
+		for (int column = 0; column < 4; column++){
+			for (int row = 0; row < 3; row++){
+				int compCount = 0;
+				int oppCount = 0;
+
+				int checkRow = row; // need a checkrow parameter for diag
+				for (int checkColumn = column; checkRow < row + 4; checkColumn++){
+					if (board[checkRow][checkColumn] == player){
+						compCount++;
+					} else if (board[checkRow][checkColumn] == opponent){
+						oppCount++;
+					}
+
+					checkRow++; // adjust for diagonal
+				}
+
+
+				totalEvaluation = applyWeights(oppCount, compCount, totalEvaluation);
+			}
+		}
+
+		// Evaluate unblocked diagonals (down to right)
+		// down to right diagonal start at most from row 3, column 3
+		for (int column = 0; column < 4; column++){
+			for (int row = 3; row <= 5; row++){
+				int compCount = 0;
+				int oppCount = 0;
+
+				int checkRow = row; // need a checkrow parameter for diag
+				for (int checkColumn = column; checkColumn < column + 4; checkColumn++){
+					if (board[checkRow][checkColumn] == player){
+						compCount++;
+					} else if (board[checkRow][checkColumn] == opponent){
+						oppCount++;
+					}
+
+					checkRow--; // adjust for diagonal
+				}
+
+				totalEvaluation = applyWeights(oppCount, compCount, totalEvaluation);
+			}
+		}
+
+		return totalEvaluation;
+
 	}
 }
