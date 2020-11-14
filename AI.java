@@ -60,11 +60,85 @@ public class AI {
 	public static int applyWeights(int pCount, int oppCount, int sum){
 		// apply the weights based on the previous connect 4 possibilities
 		if (pCount == 0){
-			//change the sum value as per how "good" a move is
+			//sum + value as per how "good" a player's move is
 		} else if (oppCount == 0) {
-			//change the sum value as per how "good" a move is
+			//sum - value as per how "good" an opponent's move is
 		}
 
+		return sum;
+	}
+
+	/**
+	 * Evaluates the possibilities for diagonal and horizontal connect fours
+	 *
+	 * @param mainP the main player
+	 * @param opp the other player
+	 * @param leftBound the leftside bound of the connect 4
+	 * @param rightBound the rightside bound of the connect 4
+	 * @param currentRow the open row that the move piece would go into
+	 * @param offsetRow the offset for diagonals (1 or -1), 0 for horizontals
+	 * @return
+	 */
+	private int evalPossibilities(GameState state, char mainP, char opp, int leftBound, int rightBound, int currentRow, int offsetRow){
+
+		int boundDiff = rightBound - leftBound;
+		int oppCount = 0;
+		int pCount = 0;
+		int sum = 0;
+		int checkColumn = leftBound;
+		int checkRow = currentRow;
+
+		// -4 or 4 depending on which type of diagonal
+		// 0 if checking horizontal
+		int diagonalDelta = offsetRow * 4;
+
+		if (boundDiff < 3) {
+			return 0;
+		}
+
+		// ++ for row and column for diagonals
+		// ++ for column for horizontals
+		for (checkColumn = checkColumn; checkColumn <= leftBound + 3; checkRow += offsetRow) {
+
+			// check whose pieces belong to whom
+			if (state.getBoard()[checkRow][checkColumn] == opp){
+				oppCount = oppCount + 1;
+			} else if (state.getBoard()[checkRow][checkColumn] == mainP){
+				pCount = pCount + 1;
+			}
+			checkColumn = checkColumn + 1;
+
+		}
+
+		// apply the weights based on the previous connect 4 possibilities
+		sum = applyWeights(pCount, oppCount, sum);
+
+		// ++ for row and column for diagonals
+		// ++ for column for horizontals
+		for (checkColumn = checkColumn;
+			 checkColumn <= rightBound;
+			 checkRow += offsetRow){
+			if (state.getBoard()[(checkRow - diagonalDelta)][(checkColumn - 4)] == opp){
+				oppCount = oppCount -1;
+			}
+
+			if (state.getBoard()[(checkRow - diagonalDelta)][(checkColumn - 4)] == mainP) {
+				pCount = pCount -1;
+			}
+
+			if (state.getBoard()[checkRow][checkColumn] == opp){
+				oppCount = oppCount + 1;
+			}
+
+			if (state.getBoard()[checkRow][checkColumn] == mainP) {
+				pCount = pCount + 1;
+			}
+
+			// apply the weights
+			sum = applyWeights(pCount, oppCount, sum);
+
+			checkColumn = checkColumn + 1;
+		}
 		return sum;
 	}
 }
