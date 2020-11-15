@@ -13,6 +13,9 @@ public class AI {
 //				System.out.print(state.getBoard()[r][c] + " ");
 //			System.out.println();
 //		}
+		for (GameState child : state.getChildren())
+			System.out.print(child.getMoveIn()+" ");
+		System.out.println();
 		return bestChild(state);
 	}
 
@@ -47,10 +50,11 @@ public class AI {
 		double value = state.getPlayer()==1? Double.MIN_VALUE: Double.MAX_VALUE;
 		GameState best = state;
 		for (GameState child : state.getChildren()) {
-			if (state.getPlayer()==1) {
-				if (child.getScore() > value) best = child;
-			} else {
-				if (child.getScore() < value) best = child;
+			System.out.println(child.getMoveIn()+": "+child.getScore());
+			if ((state.getPlayer()==1 && child.getScore() > value) ||
+					(state.getPlayer()==2 && child.getScore() < value)) {
+				best = child;
+				System.out.println(best.getMoveIn());
 			}
 			value = best.getScore();
 //			System.out.printf("%s: %.5f\n",

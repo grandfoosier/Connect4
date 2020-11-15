@@ -168,7 +168,7 @@ public class GameState {
 		for (int r = 0; r < 6; r++) sum += Arrays.hashCode(board[r]);
 		if (evals.containsKey(sum)) return evals.get(sum);
 
-		int[] scores = new int[3];//scoreByCol();
+		int[] scores = new int[3]; scores[1] = 1; scores[2] = 1;
 		int[] scoresH = scoreHoriz();
 		int[] scoresV = scoreVert();
 		int[] scoresR = scoreRise();
@@ -176,6 +176,7 @@ public class GameState {
 		scores[1] += scoresH[1] + scoresV[1] + scoresR[1] + scoresF[1];
 		scores[2] += scoresH[2] + scoresV[2] + scoresR[2] + scoresF[2];
 		score = (double)scores[1] / scores[2];
+//		if (Double.isNaN(score)) score = 100.0;
 		evals.put(sum, score);
 		return score;
 	}
