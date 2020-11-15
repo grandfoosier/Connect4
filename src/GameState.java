@@ -15,7 +15,7 @@ public class GameState {
 	private int maxTurnTime;
 	private int moveIn;
 	private double score;
-	private ArrayList<GameState> children = new ArrayList<>();
+	private ArrayList<GameState> children;
 	private final static HashMap<Integer, Double> evals = new HashMap<>();
 
 	public int getPlayer() {
@@ -98,9 +98,11 @@ public class GameState {
 	/**
 	 *
 	 */
-	void findChildren() {
+	ArrayList<GameState> findChildren() {
+		children = new ArrayList<>();
 		for (int i = 0; i < 7; i++)
 			if (board[0][i] == 0) children.add(applyMove(i));
+		return children;
 	}
 
 	GameState applyMove(int move) {

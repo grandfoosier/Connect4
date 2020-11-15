@@ -4,10 +4,10 @@ public class Test {
         int[][] board = new int[][]{
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 2, 0, 0, 0},
-                {1, 0, 2, 1, 0, 0, 0},
-                {2, 0, 2, 1, 0, 0, 0},
-                {2, 2, 1, 2, 1, 1, 1}};
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}};
         state.setBoard(board);
         state.setPlayer(2);
         state.setMoveIn(-1);
@@ -19,7 +19,11 @@ public class Test {
 //                System.out.println();
 //            } System.out.println(child.checkWin(5)+"\n");
 //        }
-        AI.prune(state, 3, Double.MIN_VALUE, Double.MAX_VALUE);
-        state.printTree(0);
+//        AI.prune(state, 3, Double.MIN_VALUE, Double.MAX_VALUE);
+//        state.printTree(0);
+
+        MCTS mcts = new MCTS();
+        int move = mcts.chooseMove(state);
+        System.out.println(move);
     }
 }
