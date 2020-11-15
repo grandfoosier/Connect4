@@ -16,7 +16,7 @@ public class GameState {
 	private int moveIn;
 	private double score;
 	private ArrayList<GameState> children;
-	private final static HashMap<Integer, Double> evals = new HashMap<>();
+	private final static HashMap<String, Double> evals = new HashMap<>();
 
 	public int getPlayer() {
 		return player;
@@ -166,9 +166,8 @@ public class GameState {
 	}
 
 	public double scoreBoard() {
-		int sum = 0;
-		for (int r = 0; r < 6; r++) sum += Arrays.hashCode(board[r]);
-		if (evals.containsKey(sum)) return evals.get(sum);
+		String hash = getHash();
+		if (evals.containsKey(hash)) return evals.get(hash);
 
 		int[] scores = new int[3]; scores[1] = 1; scores[2] = 1;
 		int[] scoresH = scoreHoriz();
@@ -178,8 +177,17 @@ public class GameState {
 		scores[1] += scoresH[1] + scoresV[1] + scoresR[1] + scoresF[1];
 		scores[2] += scoresH[2] + scoresV[2] + scoresR[2] + scoresF[2];
 		score = (double)scores[1] / scores[2];
-		evals.put(sum, score);
+		evals.put(hash, score);
 		return score;
+	}
+
+	String getHash() {
+		int[][] board = getBoard();
+		StringBuilder sb = new StringBuilder();
+		for (int r = 0; r < 6; r++)
+			for (int c = 0; c < 7; c++)
+				sb.append(board[r][c]);
+		return sb.toString();
 	}
 
 	public int[] scoreByCol() {

@@ -108,9 +108,6 @@ public class MCTS {
 
     String getHash(GameState state) {
         int[][] board = state.getBoard();
-//        int[] hashes = new int[6];
-//        for (int r = 0; r < 6; r++) hashes[r] = Arrays.hashCode(board[r]);
-//        return Arrays.hashCode(hashes);
         StringBuilder sb = new StringBuilder();
         for (int r = 0; r < 6; r++)
             for (int c = 0; c < 7; c++)
