@@ -11,7 +11,6 @@ public class Test {
         state.setBoard(board);
         state.setPlayer(2);
         state.setMoveIn(-1);
-        state.make4s();
 //        state.findChildren();
 //        for (GameState child : state.getChildren()) {
 //            for (int r = 0; r < 6; r++) {

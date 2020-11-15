@@ -5,15 +5,14 @@ public class AI {
 
 	public int computeMove(GameState state) {
 		long startTime = System.currentTimeMillis();
-		state.make4s();
 		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
 		System.out.printf("\nTime: %.3f s\n\n",
 				(System.currentTimeMillis()-startTime)/1000.0);
-		for (int r = 0; r < 6; r++) {
-			for (int c = 0; c < 7; c++)
-				System.out.print(state.getBoard()[r][c] + " ");
-			System.out.println();
-		}
+//		for (int r = 0; r < 6; r++) {
+//			for (int c = 0; c < 7; c++)
+//				System.out.print(state.getBoard()[r][c] + " ");
+//			System.out.println();
+//		}
 		return bestChild(state);
 	}
 
@@ -54,10 +53,10 @@ public class AI {
 				if (child.getScore() < value) best = child;
 			}
 			value = best.getScore();
-			System.out.printf("%s: %.5f\n",
-					child.getMoveIn(), child.getScore());
+//			System.out.printf("%s: %.5f\n",
+//					child.getMoveIn(), child.getScore());
 		}
-		System.out.printf("\nBest: %s\n", best.getMoveIn());
+//		System.out.printf("\nBest: %s\n", best.getMoveIn());
 		return best.getMoveIn();
 	}
 
