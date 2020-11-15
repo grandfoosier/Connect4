@@ -15,9 +15,9 @@ public class Client {
 	Gson gson = new Gson();
 	AI ai;
 
-	public Client(Socket socket) {
+	public Client(Socket socket, AI ai) {
 		try {
-			ai = new AI();
+			this.ai = ai;
 			input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new OutputStreamWriter(socket.getOutputStream());
 		} catch (IOException e) {
@@ -36,6 +36,7 @@ public class Client {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		ai.save();
 		closeStreams();
 	}
 

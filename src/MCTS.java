@@ -1,12 +1,32 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class MCTS {
     private static long total_runs = 0;
-    private static HashMap<String, Long[]> wins = new HashMap<>();
-    private final static HashMap<String, Double> checked = new HashMap<>();
+    private static HashMap<String, Long[]> wins;
+    private static HashMap<String, Double> checked;
+
+    public MCTS() {
+        try (
+        FileInputStream fisW = new FileInputStream("wins.dat");
+        FileInputStream fisC = new FileInputStream("checked.dat");
+        ObjectInputStream oisW = new ObjectInputStream(fisW);
+        ObjectInputStream oisC = new ObjectInputStream(fisC);
+        ) {
+            wins = (HashMap<String, Long[]>) oisW.readObject();
+            checked = (HashMap<String, Double>) oisC.readObject();
+            System.out.println("Files read.");
+        } catch (Exception e) {
+            System.out.println("Error reading from files. Starting over.");
+            wins = new HashMap<>();
+            checked = new HashMap<>();
+        }
+    }
 
     public int chooseMove(GameState state) {
-
         // Check if any moves win the game (record all states)
         ArrayList<GameState> children = state.getChildren();
         if (children == null) children = state.findChildren();
@@ -17,7 +37,7 @@ public class MCTS {
             }
 
         // If not, run the Monte Carlo search
-        for (int i =0; i < 10000; i++) iterate(state);
+        for (int i =0; i < 1000; i++) iterate(state);
 
         GameState best = null;
         long max_denom = 0;
@@ -33,6 +53,20 @@ public class MCTS {
         } System.out.println();
 
         return best.getMoveIn();
+    }
+
+    public void writeHashes() {
+        try (
+                FileOutputStream fosW = new FileOutputStream("wins.dat", false);
+                FileOutputStream fosC = new FileOutputStream("checked.dat", false);
+                ObjectOutputStream oosW = new ObjectOutputStream(fosW);
+                ObjectOutputStream oosC = new ObjectOutputStream(fosC);
+        ) {
+            oosW.writeObject(wins);
+            oosC.writeObject(checked);
+        } catch (Exception e) {
+            System.out.println("Error writing data");
+        }
     }
 
     boolean checkWin(GameState state) {

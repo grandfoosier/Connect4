@@ -1,18 +1,22 @@
 public class AI {
 	private final int MAX_DEPTH = 7;
+	MCTS mcts;
 
 	public AI() {}
 
 	public int computeMove(GameState state) {
-//		long startTime = System.currentTimeMillis();
-//		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
-//		System.out.printf("\nTime: %.3f s\n\n",
-//				(System.currentTimeMillis()-startTime)/1000.0);
-//		return bestChild(state);
+		long startTime = System.currentTimeMillis();
+		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
+		System.out.printf("\nTime: %.3f s\n\n",
+				(System.currentTimeMillis()-startTime)/1000.0);
+		return bestChild(state);
 
-		MCTS mcts = new MCTS();
-		return mcts.chooseMove(state);
+//		return mcts.chooseMove(state);
 	}
+
+	public void makeMCTS() { mcts = new MCTS(); }
+
+	public void save() { mcts.writeHashes(); }
 
 	public static double prune(GameState state, int depth, double a, double b) {
 		double win_score = state.checkWin(depth);
