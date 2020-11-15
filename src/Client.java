@@ -36,7 +36,7 @@ public class Client {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ai.save();
+		//ai.save();
 		closeStreams();
 	}
 
