@@ -5,13 +5,13 @@ public class AI {
 	public AI() {}
 
 	public int computeMove(GameState state) {
-		long startTime = System.currentTimeMillis();
-		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
-		System.out.printf("\nTime: %.3f s\n\n",
-				(System.currentTimeMillis()-startTime)/1000.0);
-		return bestChild(state);
+//		long startTime = System.currentTimeMillis();
+//		prune(state, MAX_DEPTH, Double.MIN_VALUE, Double.MAX_VALUE);
+//		System.out.printf("\nTime: %.3f s\n\n",
+//				(System.currentTimeMillis()-startTime)/1000.0);
+//		return bestChild(state);
 
-//		return mcts.chooseMove(state);
+		return mcts.chooseMove(state);
 	}
 
 	public void makeMCTS() { mcts = new MCTS(); }
