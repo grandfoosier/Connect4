@@ -60,9 +60,9 @@ public class AI {
 	public static int applyWeights(int pCount, int oppCount, int sum){
 		// apply the weights based on the previous connect 4 possibilities
 		if (pCount == 0){
-			sum = sum - HOW_GOOD[opponentCount];
+			sum = sum - HOW_GOOD[oppCount];
 		} else if (oppCount == 0) {
-			sum = sum + HOW_GOOD[playerCount];
+			sum = sum + HOW_GOOD[pCount];
 		}
 
 		return sum;
@@ -219,7 +219,7 @@ public class AI {
 				for (int checkRow = row; checkRow < row + 4; checkRow++){
 					if (board[checkRow][column] == player){
 						compCount++;
-					} else if (board[checkRow][column] == opponent){
+					} else{
 						oppCount++;
 					}
 				}
@@ -240,7 +240,7 @@ public class AI {
 					// check whose checker it is and increment their counter
 					if (board[row][checkColumn] == player){
 						compCount++;
-					} else if (board[row][checkColumn] == opponent){
+					} else{
 						oppCount++;
 					}
 				}
@@ -260,7 +260,7 @@ public class AI {
 				for (int checkColumn = column; checkRow < row + 4; checkColumn++){
 					if (board[checkRow][checkColumn] == player){
 						compCount++;
-					} else if (board[checkRow][checkColumn] == opponent){
+					} else {
 						oppCount++;
 					}
 
@@ -283,7 +283,7 @@ public class AI {
 				for (int checkColumn = column; checkColumn < column + 4; checkColumn++){
 					if (board[checkRow][checkColumn] == player){
 						compCount++;
-					} else if (board[checkRow][checkColumn] == opponent){
+					} else{
 						oppCount++;
 					}
 
