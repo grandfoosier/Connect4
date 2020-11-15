@@ -2,27 +2,31 @@ import java.util.*;
 
 public class MCTS {
     private static long total_runs = 0;
-    private final static HashMap<Integer, Long[]> wins = new HashMap<>();
-    private final static HashMap<Integer, Double> checked = new HashMap<>();
+    private static HashMap<String, Long[]> wins = new HashMap<>();
+    private final static HashMap<String, Double> checked = new HashMap<>();
 
     public int chooseMove(GameState state) {
+
         // Check if any moves win the game (record all states)
         ArrayList<GameState> children = state.getChildren();
         if (children == null) children = state.findChildren();
         for (GameState child : children)
-            if (checkWin(child)) return child.getMoveIn();
+            if (checkWin(child)) {
+                System.out.println("should win");
+                return child.getMoveIn();
+            }
 
         // If not, run the Monte Carlo search
-        for (int i =0; i < 1e4; i++) iterate(state);
+        for (int i =0; i < 10000; i++) iterate(state);
 
         GameState best = null;
         long max_denom = 0;
-        int hash = getHash(state);
+        String hash = getHash(state);
         System.out.println(wins.get(hash)[0]+", "+wins.get(hash)[1]+", "+wins.get(hash)[2]);
         for (GameState child : children) {
-            int hashC = getHash(child);
+            String hashC = getHash(child);
             System.out.println(wins.get(hashC)[0]+", "+wins.get(hashC)[1]+", "+wins.get(hashC)[2]+" | ");
-            long denom = wins.get(hashC)[1]+wins.get(hashC)[2];
+            long denom = wins.get(hashC)[0]+wins.get(hashC)[1]+wins.get(hashC)[2];
             if (denom > max_denom) {
                 max_denom = denom; best = child;
             }
@@ -32,7 +36,7 @@ public class MCTS {
     }
 
     boolean checkWin(GameState state) {
-        int hash = getHash(state);
+        String hash = getHash(state);
         if (checked.containsKey(hash) && checked.get(hash) != -1.0)
             return true;
         else if (!checked.containsKey(hash)) {
@@ -44,7 +48,7 @@ public class MCTS {
     }
 
     int iterate(GameState state) {
-        int hash = getHash(state), p;
+        int p;
 
         // Tie game
         ArrayList<GameState> children = state.getChildren();
@@ -68,11 +72,16 @@ public class MCTS {
         return false;
     }
 
-    int getHash(GameState state) {
+    String getHash(GameState state) {
         int[][] board = state.getBoard();
-        int[] hashes = new int[6];
-        for (int r = 0; r < 6; r++) hashes[r] = Arrays.hashCode(board[r]);
-        return Arrays.hashCode(hashes);
+//        int[] hashes = new int[6];
+//        for (int r = 0; r < 6; r++) hashes[r] = Arrays.hashCode(board[r]);
+//        return Arrays.hashCode(hashes);
+        StringBuilder sb = new StringBuilder();
+        for (int r = 0; r < 6; r++)
+            for (int c = 0; c < 7; c++)
+                sb.append(board[r][c]);
+        return sb.toString();
     }
 
     GameState getRandomChild(GameState state) {
@@ -83,7 +92,8 @@ public class MCTS {
     }
 
     int randomFinish(GameState state) {
-        int hash = getHash(state), p;
+        String hash = getHash(state);
+        int p;
         ArrayList<GameState> children = state.getChildren();
         if (children == null) children = state.findChildren();
 
@@ -104,7 +114,7 @@ public class MCTS {
     }
 
     void update(GameState state, int p) {
-        int hash = getHash(state);
+        String hash = getHash(state);
         Long[] winArray;
         if (wins.containsKey(hash)) winArray = wins.get(hash);
         else winArray = new Long[3];
@@ -125,7 +135,7 @@ public class MCTS {
         ArrayList<GameState> children = state.getChildren();
         ArrayList<Double> uct = new ArrayList<>();
         for (GameState child : children) {
-            int hashC = getHash(child);
+            String hashC = getHash(child);
             uct.add((double)wins.get(hashC)[player] /
                     (wins.get(hashC)[1] + wins.get(hashC)[2]) +
                     Math.sqrt(2*Math.log(total_runs) /

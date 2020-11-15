@@ -4,7 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		String ip = args.length > 0 ? args[0] : "127.0.0.1";
-		int port = args.length > 1 ? parsePort(args[1]) : 1337;
+		int port = args.length > 1 ? parsePort(args[1]) : 1338;
 		try {
 			System.out.println("Connecting to " + ip + " at " + port);
 			Socket socket = new Socket(ip, port);
